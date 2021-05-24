@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="tvL-aF-azQ" customClass="Slide" customModule="newOrzu" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ojt-L2-PBt">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7FQ-q4-wPw">
+                    <rect key="frame" x="20" y="64" width="374" height="702"/>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wqi-id-O4q">
+                    <rect key="frame" x="20" y="804.5" width="374" height="17.5"/>
+                    <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="15"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DYN-8t-M4U">
+                    <rect key="frame" x="20" y="774.5" width="374" height="20"/>
+                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="ojt-L2-PBt" firstAttribute="trailing" secondItem="J9a-Pk-nXV" secondAttribute="trailing" id="0DK-O0-J7Q"/>
+                <constraint firstItem="7FQ-q4-wPw" firstAttribute="leading" secondItem="J9a-Pk-nXV" secondAttribute="leading" constant="20" id="14P-lL-npI"/>
+                <constraint firstItem="wqi-id-O4q" firstAttribute="leading" secondItem="J9a-Pk-nXV" secondAttribute="leading" constant="20" id="5QT-OQ-QRj"/>
+                <constraint firstItem="J9a-Pk-nXV" firstAttribute="bottom" secondItem="wqi-id-O4q" secondAttribute="bottom" constant="40" id="5Sp-af-NtN"/>
+                <constraint firstItem="J9a-Pk-nXV" firstAttribute="trailing" secondItem="wqi-id-O4q" secondAttribute="trailing" constant="20" id="AA6-xh-ggm"/>
+                <constraint firstItem="wqi-id-O4q" firstAttribute="top" secondItem="DYN-8t-M4U" secondAttribute="bottom" constant="10" id="Bjk-oV-hEE"/>
+                <constraint firstItem="J9a-Pk-nXV" firstAttribute="trailing" secondItem="DYN-8t-M4U" secondAttribute="trailing" constant="20" id="Et1-F2-gWG"/>
+                <constraint firstItem="J9a-Pk-nXV" firstAttribute="trailing" secondItem="7FQ-q4-wPw" secondAttribute="trailing" constant="20" id="Luy-gx-dhw"/>
+                <constraint firstItem="7FQ-q4-wPw" firstAttribute="top" secondItem="J9a-Pk-nXV" secondAttribute="top" constant="20" id="MHj-rM-iYK"/>
+                <constraint firstItem="7FQ-q4-wPw" firstAttribute="centerX" secondItem="J9a-Pk-nXV" secondAttribute="centerX" id="NIY-dg-eZN"/>
+                <constraint firstItem="ojt-L2-PBt" firstAttribute="centerX" secondItem="J9a-Pk-nXV" secondAttribute="centerX" id="aOr-D3-Pmt"/>
+                <constraint firstAttribute="bottom" secondItem="ojt-L2-PBt" secondAttribute="bottom" id="cJV-cQ-SBQ"/>
+                <constraint firstItem="ojt-L2-PBt" firstAttribute="leading" secondItem="J9a-Pk-nXV" secondAttribute="leading" id="dfS-Oa-JsJ"/>
+                <constraint firstItem="ojt-L2-PBt" firstAttribute="top" secondItem="tvL-aF-azQ" secondAttribute="top" id="iyw-7R-nv4"/>
+                <constraint firstItem="J9a-Pk-nXV" firstAttribute="bottom" secondItem="7FQ-q4-wPw" secondAttribute="bottom" constant="96" id="lBT-Bu-Q75"/>
+                <constraint firstItem="DYN-8t-M4U" firstAttribute="leading" secondItem="J9a-Pk-nXV" secondAttribute="leading" constant="20" id="lXE-cT-wBI"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="J9a-Pk-nXV"/>
+            <connections>
+                <outlet property="Ditayl_Slider" destination="wqi-id-O4q" id="aXr-bG-z7C"/>
+                <outlet property="Image_Slider" destination="7FQ-q4-wPw" id="358-Gr-YwB"/>
+                <outlet property="Title_Slider" destination="DYN-8t-M4U" id="cVm-x9-ais"/>
+                <outlet property="bagImage" destination="ojt-L2-PBt" id="jOC-Cv-IL8"/>
+            </connections>
+            <point key="canvasLocation" x="243" y="89"/>
+        </view>
+    </objects>
+</document>

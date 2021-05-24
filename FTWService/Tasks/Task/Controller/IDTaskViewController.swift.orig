@@ -1,0 +1,1265 @@
+//
+//  IDTaskViewController.swift
+//  newOrzu
+//
+//  Created by MacOs User on 11/21/19.
+//  Copyright © 2019 Orzu. All rights reserved.
+//
+
+
+import UIKit
+import JTMaterialSpinner
+import Alamofire
+import MaterialComponents
+import Shimmer
+import SnapKit
+var associateObjectValue: Int = 0
+
+class IDTaskViewController: UIViewController,UIScrollViewDelegate {
+    var taskIndex = 0
+    var url = "https://projectapi.pw/api?appid=$2y$12$esyosghhXSh6LxcX17N/suiqeJGJq/VQ9QkbqvImtE4JMWxz7WqYS&lang=ru&opt=view_task&tasks=all"
+    var callbackDelete : ((Int)->())?
+    private let bgView:UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "blueFon")
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    let shimmerUserImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "profileWhite")
+        return view
+    }()
+    
+    private let cardView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 45
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.backgroundColor = .white
+        return view
+    }()
+    private let views: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 45
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        return view
+    }()
+    private let lineview: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.groupTableViewBackground
+        return view
+    }()
+    private let lineview2: UIView = {
+        let view = UIView()
+        view.backgroundColor = #colorLiteral(red: 0, green: 0.3568627451, blue: 0.6039215686, alpha: 1)
+        return view
+    }()
+    private let gobutton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Далее", for: .normal)
+        button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
+        return button
+    }()
+    private let taskName: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 19)
+        return label
+    }()
+    private let cashLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = #colorLiteral(red: 0.9960784314, green: 0.5490196078, blue: 0, alpha: 1)
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        return label
+    }()
+   
+    private let locationText: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.text = "Алматы"
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    private let dateText: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    private let amountText: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.text = "Напрямую исполнителю"
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    private let narrativeText: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.contentSize.height = 700
+        view.backgroundColor = .clear
+        view.showsHorizontalScrollIndicator = true
+        view.layer.cornerRadius = 45
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        return view
+    }()
+    let userImage:UIImageView = {
+        let view = UIImageView()
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 32
+        return view
+    }()
+    let userName:UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        return label
+    }()
+    let createrTaskLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Заказчик"
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    private let Userviews: UIView = {
+        let view = UIView()
+        view.layer.borderWidth = 1
+        view.layer.borderColor = #colorLiteral(red: 0, green: 0.3568627451, blue: 0.6039215686, alpha: 1)
+        view.layer.cornerRadius = 10
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    let GoodiconLike: UIImageView = {
+        let image = UIImageView()
+        image.image = #imageLiteral(resourceName: "greenGood")
+        return image
+    }()
+    let NormaliconLike: UIImageView = {
+        let image = UIImageView()
+        image.image = #imageLiteral(resourceName: "brownNormal")
+        image.isUserInteractionEnabled = true
+        return image
+    }()
+    let BadiconLike: UIImageView = {
+        let image = UIImageView()
+        image.image = #imageLiteral(resourceName: "redBad")
+        image.isUserInteractionEnabled = true
+        return image
+    }()
+    let SumGoodIcon:UILabel = {
+        let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont(name: "Roboto-Regular", size: 13)
+        label.text = "1"
+        return label
+    }()
+    let SumNormalIcon:UILabel = {
+        let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont(name: "Roboto-Regular", size: 13)
+        label.text = "1"
+        return label
+    }()
+    let SumBadIcon:UILabel = {
+        let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont(name: "Roboto-Regular", size: 13)
+        label.text = "0"
+        return label
+    }()
+    let imageButton: UIImageView = {
+        let image = UIImageView()
+        image.image = #imageLiteral(resourceName: "right")
+        image.changeColor = #colorLiteral(red: 0, green: 0.3568627451, blue: 0.6039215686, alpha: 1)
+        return image
+    }()
+    let titleDate: UILabel = {
+        let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.text = "Cоздано"
+        return label
+    }()
+    let createdDate: UILabel = {
+        let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        layout.scrollDirection = .horizontal
+        collectionView.isPagingEnabled = true
+        collectionView.isScrollEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
+        return collectionView
+    }()
+    
+    private  lazy var pageControl: UIPageControl = {
+        let pc = UIPageControl()
+        pc.currentPage = 0
+        pc.currentPageIndicatorTintColor = #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)
+        pc.pageIndicatorTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        return pc
+    }()
+    let EmptyShimmerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    var count = 0
+    var allParseImageFromParam = [UIImage]()
+    var index:Int?
+    var Title = ""
+    var dateT = ""
+    var amount = ""
+    var taskId = ""
+    var checkIsTherePhotoBool = false
+    var taskArray = [Task_Resource]()
+    var textSize:CGFloat = 0
+    var UserId:Int = 0
+    var isTask = ""
+    private var shimmer: FBShimmeringView!
+    var paramArray = [Param](){
+        didSet{
+            for task in taskArray {
+                self.textSize = self.narrativeText.heightForLabel(text: task.narrative ?? "Description", font: UIFont.systemFont(ofSize: 15), width: self.narrativeText.frame.width)
+            }
+            for param in paramArray {
+                if param.param == "address" {
+                    locationText.text = param.value!
+                } else if param.param == "work_with" {
+                    dateText.text = "Дата по договоренности"
+                }else if param.param == "image"{
+                    let urlString = "https://projectapi.pw/\(param.value!)"
+                    guard let url = URL(string: urlString) else {return}
+                    if let data = try? Data(contentsOf: url){
+                        DispatchQueue.main.async{
+                            self.allParseImageFromParam.append(UIImage(data: data)!)
+                            print(self.allParseImageFromParam)
+                            self.count += 1
+                            self.collectionView.reloadData()
+                        }
+                    }
+                    self.checkIsTherePhotoBool = true
+                }
+                self.scrollView.contentSize.height = self.checkIsTherePhotoBool == true ? (800 + self.textSize) : self.textSize + 700
+            }
+            self.createViews()
+            self.pageControl.numberOfPages = count
+        }
+    }
+ 
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureDetailInfo(index: index!)
+        configureCollectionView()
+        viewSettings()
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        gobutton.applyGradient(colors: [#colorLiteral(red: 0.9960784314, green: 0.5490196078, blue: 0, alpha: 1),#colorLiteral(red: 0.9725490196, green: 0.2117647059, blue: 0, alpha: 1)])
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0, green: 0.3568627451, blue: 0.6039215686, alpha: 1)
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
+        //        navigationController?.navigationBar.barTintColor = .clear
+        
+    }
+    
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.9647058824, green: 0.968627451, blue: 0.9764705882, alpha: 1)
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)]
+        
+    }
+    
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    
+    fileprivate func viewSettings() {
+        self.view.addSubview(bgView)
+        
+        bgView.snp.makeConstraints { (make) in
+            make.edges.equalTo(self.view)
+        }
+        taskName.text = Title
+        settingButton()
+        shimmerEffect()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(showProfiles))
+        Userviews.addGestureRecognizer(tap)
+    }
+    
+    fileprivate func configureCollectionView() {
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(AnketaImageCollectionViewCell.self, forCellWithReuseIdentifier: "anketaImages1")
+    }
+  
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let x = targetContentOffset.pointee.x
+        pageControl.currentPage = Int(x/collectionView.frame.width)
+    }
+    
+    func settingButton() {
+        if isTask == "myTask"{
+            gobutton.setTitle("Посмотреть отклики", for: .normal)
+            let share = UIImage(named: "more_vert")
+            let shareItem = UIBarButtonItem(image: share, style: .done, target: self, action: #selector(shareBarButtonAction))
+            self.navigationItem.rightBarButtonItems = [shareItem]
+        } else {
+            gobutton.setTitle("Добавить предложение", for: .normal)
+        }
+    }
+    
+    @objc func buttonPressed() {
+        if isTask == "myTask"{
+            let vc = ListOfferViewController()
+            vc.taskId = taskId
+            self.show(vc, sender: self)
+        } else {
+            let vc = AddOfferViewController()
+            vc.userName = userName.text!
+            vc.taskId = taskId
+            vc.userimage = userImage.image
+            self.show(vc, sender: self)
+        }
+    }
+    @objc func showProfiles() {
+        if isTask == "myTask"{
+            let vc = UserProfileViewController()
+            vc.checkController = false
+            self.show(vc, sender: self)
+        }else{
+            let vc = UserIDProfileViewController()
+            vc.userID = self.UserId
+            vc.UsernameString = userName.text!
+            self.show(vc, sender: self)
+        }
+    }
+    
+    //MARK:SHARE BAR BUTTON
+    @objc func shareBarButtonAction() {
+        let shareIcon = #imageLiteral(resourceName: "share24")
+        let commentIcon = #imageLiteral(resourceName: "chat-1")
+        let bag = image(with: #imageLiteral(resourceName: "bagDelete"), scaledTo: CGSize(width: 20, height: 20))
+        
+        let alertVc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deleteaction = UIAlertAction(title: "Удалить", style: .default) { (_) in
+            self.tapAction()
+        }
+        let shareaction = UIAlertAction(title: "Поделиться", style: .default) { (_) in
+            let message = "Task"
+            //Set the link to share.
+            if let link = URL(string: "https://orzu.org/tasks/view/\(self.taskId)")
+            {
+                let objectsToShare = [message,link] as [Any]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                self.present(activityVC, animated: true, completion: nil)
+            }
+        }
+        deleteaction.setValue(bag, forKey: "image")
+        deleteaction.setValue(UIColor.red, forKey: "titleTextColor")
+        deleteaction.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        shareaction.setValue(shareIcon, forKey: "image")
+        shareaction.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let action2 = UIAlertAction(title: "Пожаловаться", style: .default)
+        action2.setValue(commentIcon, forKey: "image")
+        action2.setValue(UIColor.orange, forKey: "titleTextColor")
+        action2.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let cancel = UIAlertAction(title: "Закрыть", style: .cancel)
+        alertVc.addAction(shareaction)
+        alertVc.addAction(deleteaction)
+        alertVc.addAction(action2)
+        alertVc.addAction(cancel)
+        self.present(alertVc,animated: true)
+    }
+    func image(with image: UIImage?, scaledTo newSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContext(newSize)
+        image?.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+    
+    
+    func tapAction() {
+        let alert = UIAlertController(title: "", message: "Вы уверены, что хотите удалить задание?", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        let okAction = UIAlertAction(title: "Удалить", style: .default) { (action) in
+            let userId = UserDefaults.standard.integer(forKey: "ID")
+            self.url += "&\(userId)&delete=\(self.taskId)"
+            Networking.deleteRequest(url: self.url)
+            self.callbackDelete!(userId)
+            self.navigationController?.popViewController(animated: true)
+        }
+        okAction.setValue(UIColor(red: 254/255.0, green: 10/255.0, blue: 0/255.0, alpha: 1   ), forKey: "titleTextColor")
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert,animated: true)
+    }
+    func configureDetailInfo(index:Int) {
+        getTask(id: index) { (task, param) in
+            self.taskArray = task
+            self.paramArray = param
+            self.checkIDURL()
+            //            self.settingButton()
+            for task in self.taskArray {
+                let dateFormatterGet = DateFormatter()
+                dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                let dateFormatterPrint = DateFormatter()
+                dateFormatterPrint.locale = Locale(identifier: "ru_RU")
+                dateFormatterPrint.dateFormat = "EEEE,dd MMM yyyy,HH:mm:ss"
+                print(task.created_at!)
+                if let date = dateFormatterGet.date(from: task.created_at!) {
+                    self.createdDate.text = date.timeAgoSinceDate(day: dateFormatterPrint.string(from: date)) //not forgot
+                    print(date.timeAgoSinceDate(day: dateFormatterPrint.string(from: date)))
+                } else {
+                    print("There was an error decoding the string")
+                }
+                self.dateText.text = self.dateT
+                self.narrativeText.text = task.narrative
+                self.cashLabel.text = self.amount
+                print(self.textSize)
+                print(self.checkIsTherePhotoBool)
+            }
+            
+            
+            self.pageControl.numberOfPages = self.count
+        }
+    }
+    func getTask(id:Int,completion: @escaping (_ taskcategory: [Task_Resource],_ paramcategory: [Param]) -> ()) {
+        guard let urls = URL(string: "\(Constans().taskUrl)\(id)") else {return}
+        
+        Alamofire.request(urls).validate().responseJSON { (response) in
+            switch response.result {
+            case .success(let value):
+                let tasksArray = value as? [Array<[String:Any]>]
+                var taskarray = [Task_Resource]()
+                var paramArray = [Param]()
+                for item1 in tasksArray![0] {
+                    let task = Task_Resource(Id: item1["id"] as? Int,
+                                             task: item1["task"] as? String,
+                                             cat_id: item1["cat_id"] as? Int,
+                                             narrative: item1["narrative"] as? String,
+                                             created_at: item1["created_at"] as? String,
+                                             user_id: item1["user_id"] as? Int)
+                    taskarray.append(task)
+                }
+                for item2 in tasksArray![1] {
+                    let param = Param(param: item2["param"] as? String, value: item2["value"] as? String)
+                    paramArray.append(param)
+                    print(paramArray)
+                }
+                completion(taskarray,paramArray)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            
+        }
+    }
+    
+    //MARK: Check id
+    func checkIDURL() {
+        for item in taskArray {
+            let id = item.user_id!
+            let myId = UserDefaults.standard.integer(forKey: "ID")
+            if id == myId,item.Id == taskIndex{
+                isTask = "myTask"
+            }
+            print(id)
+            guard let chechIdUrl = URL(string: "https://projectapi.pw/api?appid=$2y$12$esyosghhXSh6LxcX17N/suiqeJGJq/VQ9QkbqvImtE4JMWxz7WqYS&opt=view_user&user=\(id)") else {return}
+            Alamofire.request(chechIdUrl).validate().responseJSON { (response) in
+                switch response.result {
+                case .success(let value):
+                    let checkUserName = value as! [String:Any]
+                    let user = UserInfo(json: checkUserName)
+                    let urlString = "https://projectapi.pw/\(user.avatar!)"
+                    guard let url = URL(string: urlString) else {return}
+                    let gueue = DispatchQueue.global(qos: .utility)
+                    gueue.async {
+                        if let data = try? Data(contentsOf: url) {
+                            DispatchQueue.main.async {
+                                self.userImage.image = UIImage(data: data)
+                            }
+                        }
+                    }
+                    if user.fname == nil {
+                        self.userName.text = user.name!
+                    } else {
+                        self.userName.text = "\(user.name!) \(user.fname!)"
+                    }
+                    self.SumBadIcon.text = String(user.sad!)
+                    self.SumNormalIcon.text = String(user.neutral!)
+                    self.SumGoodIcon.text = String(user.happy!)
+                    self.UserId = user.Id!
+                    PassData.UserID = String(user.Id!)
+                    self.shimmer.isShimmering = false
+                    self.shimmer.isHidden = true
+                    self.EmptyShimmerView.isHidden = true
+                    self.cardView.isHidden = false
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    
+                }
+            }
+        }
+        settingButton()
+    }
+    
+    
+    
+    //    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    //        if scrollView.contentOffset.x > 0 || scrollView.contentOffset.x < 0 {
+    //            scrollView.contentOffset.x = 0
+    //        }
+    //        if narrativeText.text!.count < 100 {
+    //            scrollView.showsVerticalScrollIndicator = false
+    //            if scrollView.contentOffset.y > 0 || scrollView.contentOffset.y < 0 {
+    //                scrollView.contentOffset.y = 0
+    //            }
+    //        }
+    //
+    //    }
+    
+    @IBAction func shareButtonAction(_ sender: UIBarButtonItem) {
+        let shareIcon = #imageLiteral(resourceName: "share")
+        let commentIcon = #imageLiteral(resourceName: "chat-1")
+        let alertVc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deleteaction = UIAlertAction(title: "Удалить", style: .default) { (_) in
+            
+        }
+        let shareaction = UIAlertAction(title: "Поделиться", style: .default) { (_) in
+            let message = "Task"
+            //Set the link to share.
+            if let link = URL(string: "https://orzu.org/tasks/view/\(self.taskId)")
+            {
+                let objectsToShare = [message,link] as [Any]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                self.present(activityVC, animated: true, completion: nil)
+            }
+        }
+        shareaction.setValue(shareIcon, forKey: "image")
+        shareaction.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let action2 = UIAlertAction(title: "Пожаловаться", style: .default)
+        action2.setValue(commentIcon, forKey: "image")
+        action2.setValue(UIColor.red, forKey: "titleTextColor")
+        action2.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let cancel = UIAlertAction(title: "Закрыть", style: .cancel)
+        alertVc.addAction(shareaction)
+        alertVc.addAction(action2)
+        alertVc.addAction(cancel)
+        self.present(alertVc,animated: true)
+        
+    }
+    
+    /*
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
+}
+extension Date {
+    
+    func timeAgoSinceDate(day: String) -> String {
+        // From Time
+        let fromDate = self
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "EEEE,dd MMM yyyy,HH:mm:ss"
+        let dateFormatterPrint = DateFormatter()
+        dateFormatterPrint.locale = Locale(identifier: "ru_RU")
+        dateFormatterPrint.dateFormat = "HH:mm"
+        // To Time
+        let toDate = Date()
+        
+        // Estimation
+        // Year
+        if let interval = Calendar.current.dateComponents([.year], from: fromDate, to: toDate).year, interval > 0  {
+            
+            return interval == 1 ? "\(interval)" + " " + "год назад" : "\(interval)" + " " + "лет назад"
+        }
+        
+        // Month
+        if let interval = Calendar.current.dateComponents([.month], from: fromDate, to: toDate).month, interval > 0  {
+            
+            return interval == 1 ? "\(interval)" + " " + "Только что" : "\(interval)" + " " + "Только что"
+        }
+        
+        // Day
+        if let interval = Calendar.current.dateComponents([.day], from: fromDate, to: toDate).day, interval >= 0  {
+            if interval == 0 {
+                if let date = dateFormatterGet.date(from: day){
+                    return "сегодня" + "в" + "\(dateFormatterPrint.string(from: date))"
+                }
+            }
+            else if interval == 1 {
+                return "\(interval)" + " " + "вчера"
+            } else if interval == 2 {
+                return "\(interval)" + " " + "позавчера"
+            } else if interval >= 3 {
+                return day
+            }
+        }
+        
+        // Hours
+        if let interval = Calendar.current.dateComponents([.hour], from: fromDate, to: toDate).hour, interval > 0 {
+            if interval == 1 {
+                return "\(interval)" + " " + "час назад"
+            } else if interval <= 4 && interval != 1 {
+                return "\(interval)" + " " + "часa назад"
+            } else if interval >= 5 {
+                return "\(interval)" + " " + "часов назад"
+                
+            }
+        }
+        
+        // Minute
+        if let interval = Calendar.current.dateComponents([.minute], from: fromDate, to: toDate).minute, interval > 0 {
+            if interval == 1 {
+                return "одну минуту назад"
+            } else if interval <= 4 && interval != 1 {
+                return "\(interval)" + " " + "минуты назад"
+            } else if interval >= 5 {
+                return "\(interval)" + " " + "минут назад"
+                
+            }
+        }
+        
+        return "только что"
+    }
+}
+
+extension UIView {
+    
+    fileprivate var isAnimate: Bool {
+        get {
+            return objc_getAssociatedObject(self, &associateObjectValue) as? Bool ?? false
+        }
+        set {
+            return objc_setAssociatedObject(self, &associateObjectValue, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    
+    @IBInspectable var shimmerAnimation: Bool {
+        get {
+            return isAnimate
+        }
+        set {
+            self.isAnimate = newValue
+        }
+    }
+    
+    func subviewsRecursive() -> [UIView] {
+        return subviews + subviews.flatMap { $0.subviewsRecursive() }
+    }
+    
+}
+
+
+
+extension IDTaskViewController:UICollectionViewDelegate,UICollectionViewDataSource{
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return allParseImageFromParam.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "anketaImages1", for: indexPath) as! AnketaImageCollectionViewCell
+        //        let gueue = DispatchQueue.global(qos: .utility)
+        
+        cell.imageview.image = allParseImageFromParam[indexPath.row]
+        
+        //        cell.imageview.image = arrayHG[indexPath.row]
+        //        cell.imageview.image = imageArray![indexPath.row]
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let popUpVC = storyboard.instantiateViewController(withIdentifier: "popUpZoom") as! ZoomPhotoViewController
+        //        self.addChild(popUpVC) // 2
+        ////        popUpVC.view.frame = self.view.frame  // 3
+        //        self.view.addSubview(popUpVC.view) // 4
+        
+        
+        popUpVC.zoomImage = allParseImageFromParam[indexPath.row]
+        self.show(popUpVC, sender: self)
+        
+    }
+}
+
+extension IDTaskViewController: UICollectionViewDelegateFlowLayout{
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = collectionView.frame.size
+        return CGSize(width: size.width, height: size.height)
+    }
+}
+extension IDTaskViewController {
+    private func createViews() {
+        cardView.isHidden = true
+        let locationstackView = UIStackView()
+        locationstackView.axis = .vertical
+        locationstackView.distribution = .fill
+        locationstackView.alignment = .fill
+        locationstackView.spacing = 6
+        
+        let amountstackView = UIStackView()
+        amountstackView.axis = .vertical
+        amountstackView.distribution = .fill
+        amountstackView.alignment = .fill
+        amountstackView.spacing = 6
+        
+        let datestackView = UIStackView()
+        datestackView.axis = .vertical
+        datestackView.distribution = .fill
+        datestackView.alignment = .fill
+        datestackView.spacing = 6
+        
+        let narrativestackView = UIStackView()
+        narrativestackView.axis = .vertical
+        narrativestackView.distribution = .fill
+        narrativestackView.alignment = .fill
+        narrativestackView.spacing = 6
+        
+        let mainStackView = UIStackView()
+        mainStackView.axis = .vertical
+        mainStackView.distribution = .fill
+        mainStackView.alignment = .fill
+        mainStackView.spacing = 20
+        
+        let labelLocation = UILabel()
+        labelLocation.text = "Адрес"
+        labelLocation.textColor = .lightGray
+        labelLocation.font = UIFont.systemFont(ofSize: 15)
+        
+        let labelDate = UILabel()
+        labelDate.text = "Начать"
+        labelDate.textColor = .lightGray
+        labelDate.font = UIFont.systemFont(ofSize: 15)
+        
+        let labelAmount = UILabel()
+        labelAmount.text = "Оплата"
+        labelAmount.textColor = .lightGray
+        labelAmount.font = UIFont.systemFont(ofSize: 15)
+        
+        let labelNarrative = UILabel()
+        labelNarrative.text = "Нужно"
+        labelNarrative.textColor = .lightGray
+        labelNarrative.font = UIFont.systemFont(ofSize: 15)
+        
+        self.view.addSubview(cardView)
+        
+        cardView.addSubview(scrollView)
+        
+        scrollView.addSubview(views)
+        views.addSubview(lineview)
+        views.addSubview(gobutton)
+        views.addSubview(mainStackView)
+        views.addSubview(taskName)
+        views.addSubview(collectionView)
+        views.addSubview(cashLabel)
+        views.addSubview(lineview2)
+        views.addSubview(Userviews)
+        views.addSubview(pageControl)
+        views.addSubview(createrTaskLabel)
+        views.addSubview(titleDate)
+        views.addSubview(createdDate)
+        Userviews.addSubview(userImage)
+        Userviews.addSubview(userName)
+        Userviews.addSubview(BadiconLike)
+        Userviews.addSubview(NormaliconLike)
+        Userviews.addSubview(GoodiconLike)
+        Userviews.addSubview(SumBadIcon)
+        Userviews.addSubview(SumGoodIcon)
+        Userviews.addSubview(SumNormalIcon)
+        Userviews.addSubview(imageButton)
+        mainStackView.addArrangedSubview(locationstackView)
+        mainStackView.addArrangedSubview(datestackView)
+        mainStackView.addArrangedSubview(amountstackView)
+        mainStackView.addArrangedSubview(narrativestackView)
+        
+        locationstackView.addArrangedSubview(labelLocation)
+        locationstackView.addArrangedSubview(locationText)
+        amountstackView.addArrangedSubview(labelAmount)
+        amountstackView.addArrangedSubview(amountText)
+        datestackView.addArrangedSubview(labelDate)
+        datestackView.addArrangedSubview(dateText)
+        narrativestackView.addArrangedSubview(labelNarrative)
+        narrativestackView.addArrangedSubview(narrativeText)
+        
+        cardView.snp.makeConstraints { (make) in
+            let heightView = self.view.frame.height * 0.9
+            make.left.equalTo(self.view.snp.left)
+            make.right.equalTo(self.view.snp.right)
+            make.bottom.equalTo(self.view.snp.bottom)
+            make.height.equalTo(heightView)
+        }
+        scrollView.snp.makeConstraints { (make) in
+            make.top.equalTo(cardView.snp.top)
+            make.leading.equalTo(cardView.snp.leading)
+            make.trailing.equalTo(cardView.snp.trailing)
+            make.bottom.equalTo(cardView.snp.bottom)
+        }
+        views.snp.makeConstraints { (make) in
+            let width = Double(scrollView.contentSize.width)
+            let height = Double(scrollView.contentSize.height)
+            make.top.equalTo(scrollView.snp.top)
+            make.leading.equalTo(scrollView.snp.leading)
+            make.trailing.equalTo(scrollView.snp.trailing)
+            make.height.equalTo(height)
+            make.width.equalTo(width)
+            make.bottom.equalTo(scrollView.snp.bottom)
+            make.centerX.equalTo(scrollView.snp.centerX)
+        }
+        titleDate.snp.makeConstraints { (make) in
+            make.top.equalTo(views.snp.top).offset(16)
+            make.left.equalTo(views.snp.left).offset(24)
+        }
+        createdDate.snp.makeConstraints { (make) in
+            make.top.equalTo(titleDate.snp.top)
+            make.left.equalTo(titleDate.snp.right).offset(4)
+            make.right.equalTo(views.snp.right).offset(-24).priority(999)
+        }
+        taskName.snp.makeConstraints { (make) in
+            make.top.equalTo(titleDate.snp.bottom).offset(16)
+            make.left.equalTo(views.snp.left).offset(24)
+            make.right.equalTo(views.snp.right).offset(-24)
+        }
+        cashLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(taskName.snp.bottom).offset(16)
+            make.left.equalTo(views.snp.left).offset(24)
+        }
+        lineview.snp.makeConstraints { (make) in
+            make.top.equalTo(cashLabel.snp.bottom).offset(12)
+            make.left.equalTo(views.snp.left).offset(24)
+            make.right.equalTo(views.snp.right).offset(-24)
+            make.height.equalTo(1)
+        }
+        if (self.checkIsTherePhotoBool){
+            collectionView.snp.makeConstraints { (make) in
+                make.top.equalTo(lineview.snp.bottom).offset(4)
+                make.left.equalTo(views.snp.left).offset(24)
+                make.right.equalTo(views.snp.right).offset(-24)
+                make.height.equalTo(160)
+            }
+            pageControl.snp.makeConstraints { (make) in
+                make.left.equalTo(views.snp.left).offset(24)
+                make.right.equalTo(views.snp.right).offset(-24)
+                make.bottom.equalTo(collectionView.snp.bottom).offset(-5)
+                make.height.equalTo(10)
+            }
+            mainStackView.snp.makeConstraints { (make) in
+                make.top.equalTo(collectionView.snp.bottom).offset(16)
+                make.left.equalTo(views.snp.left).offset(24)
+                make.right.equalTo(views.snp.right).offset(-24)
+            }
+        }else{
+            mainStackView.snp.makeConstraints { (make) in
+                make.top.equalTo(lineview.snp.bottom).offset(16)
+                make.left.equalTo(views.snp.left).offset(24)
+                make.right.equalTo(views.snp.right).offset(-24)
+            }
+        }
+        
+        lineview2.snp.makeConstraints { (make) in
+            make.top.equalTo(mainStackView.snp.bottom).offset(12)
+            make.left.equalTo(views.snp.left).offset(24)
+            make.right.equalTo(views.snp.right).offset(-24)
+            make.height.equalTo(1)
+        }
+        createrTaskLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(lineview2.snp.bottom).offset(12)
+            make.left.equalTo(lineview2.snp.left)
+        }
+        Userviews.snp.makeConstraints { (make) in
+            make.top.equalTo(createrTaskLabel.snp.bottom).offset(12)
+            make.left.equalTo(lineview2.snp.left)
+            make.right.equalTo(lineview2.snp.right)
+            make.height.equalTo(80)
+        }
+        userImage.snp.makeConstraints { (make) in
+            make.centerY.equalTo(Userviews.snp.centerY)
+            make.left.equalTo(Userviews.snp.left).offset(16)
+            make.size.equalTo(CGSize(width: 64, height: 64))
+        }
+        userName.snp.makeConstraints { (make) in
+            make.top.equalTo(userImage.snp.top).offset(4)
+            make.left.equalTo(userImage.snp.right).offset(16)
+            make.right.equalTo(Userviews.snp.right).offset(-16)
+        }
+        BadiconLike.snp.makeConstraints { (make) in
+            make.top.equalTo(userName.snp.bottom).offset(8)
+            make.left.equalTo(userName.snp.left)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        SumBadIcon.snp.makeConstraints { (make) in
+            make.centerY.equalTo(BadiconLike.snp.centerY)
+            make.left.equalTo(BadiconLike.snp.right).offset(4)
+        }
+        NormaliconLike.snp.makeConstraints { (make) in
+            make.top.equalTo(BadiconLike.snp.top)
+            make.left.equalTo(SumBadIcon.snp.right).offset(8)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        SumNormalIcon.snp.makeConstraints { (make) in
+            make.centerY.equalTo(NormaliconLike.snp.centerY)
+            make.left.equalTo(NormaliconLike.snp.right).offset(4)
+        }
+        GoodiconLike.snp.makeConstraints { (make) in
+            make.top.equalTo(NormaliconLike.snp.top)
+            make.left.equalTo(SumNormalIcon.snp.right).offset(8)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        SumGoodIcon.snp.makeConstraints { (make) in
+            make.centerY.equalTo(GoodiconLike.snp.centerY)
+            make.left.equalTo(GoodiconLike.snp.right).offset(4)
+        }
+        imageButton.snp.makeConstraints { (make) in
+            make.centerY.equalTo(Userviews.snp.centerY)
+            make.right.equalTo(Userviews.snp.right).offset(-16)
+            make.size.equalTo(CGSize(width: 24, height: 24))
+        }
+        gobutton.snp.makeConstraints { (make) in
+            make.top.equalTo(Userviews.snp.bottom).offset(32)
+            make.left.equalTo(views.snp.left).offset(24)
+            make.right.equalTo(views.snp.right).offset(-24)
+            make.height.equalTo(45)
+        }
+        
+    }
+    
+    func shimmerEffect() {
+        EmptyShimmerView.isHidden = false
+        let lineview1 = UIView()
+        lineview1.backgroundColor = UIColor.groupTableViewBackground
+        
+<<<<<<< HEAD
+        let lineView2 = UIView()
+        lineView2.backgroundColor = UIColor.groupTableViewBackground
+=======
+        let alertVc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deleteaction = UIAlertAction(title: "Удалить", style: .default) { (_) in
+            self.tapAction()
+        }
+        let shareaction = UIAlertAction(title: "Поделиться", style: .default) { (_) in
+            let message = "Task"
+            //Set the link to share.
+            if let link = URL(string: "https://orzu.org/tasks/view/\(self.taskId)")
+            {
+                let objectsToShare = [message,link] as [Any]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                self.present(activityVC, animated: true, completion: nil)
+            }
+        }
+        deleteaction.setValue(bag, forKey: "image")
+        deleteaction.setValue(UIColor.red, forKey: "titleTextColor")
+        deleteaction.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        shareaction.setValue(shareIcon, forKey: "image")
+        shareaction.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let action2 = UIAlertAction(title: "Пожаловаться", style: .default)
+        action2.setValue(commentIcon, forKey: "image")
+        action2.setValue(UIColor.orange, forKey: "titleTextColor")
+        action2.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+        let cancel = UIAlertAction(title: "Закрыть", style: .cancel)
+        alertVc.addAction(shareaction)
+        alertVc.addAction(deleteaction)
+        alertVc.addAction(action2)
+        alertVc.addAction(cancel)
+        self.present(alertVc,animated: true)
+    }
+    func image(with image: UIImage?, scaledTo newSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContext(newSize)
+        image?.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+    
+    
+    func tapAction() {
+        let alert = UIAlertController(title: "", message: "Вы уверены, что хотите удалить задание?", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        let okAction = UIAlertAction(title: "Удалить", style: .default) { (action) in
+            let userId = UserDefaults.standard.integer(forKey: "ID")
+            self.url += "&\(userId)&delete=\(self.taskId)"
+//            Networking.deleteRequest(url: self.url)
+            guard let url = URL(string: self.url) else { return }
+            Alamofire.request(url,method: .get).validate().responseJSON { (response) in
+                switch response.result{
+                case .success(let value):
+                    print(value)
+                    self.callbackDelete!(userId)
+                    self.navigationController?.popViewController(animated: true)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+ 
+        }
+        okAction.setValue(UIColor(red: 254/255.0, green: 10/255.0, blue: 0/255.0, alpha: 1   ), forKey: "titleTextColor")
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert,animated: true)
+    }
+    func configureDetailInfo(index:Int) {
+        getTask(id: index) { (task, param) in
+            self.taskArray = task
+            self.paramArray = param
+            self.checkIDURL()
+            //            self.settingButton()
+            for task in self.taskArray {
+                let dateFormatterGet = DateFormatter()
+                dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                let dateFormatterPrint = DateFormatter()
+                dateFormatterPrint.locale = Locale(identifier: "ru_RU")
+                dateFormatterPrint.dateFormat = "EEEE,dd MMM yyyy,HH:mm:ss"
+                print(task.created_at!)
+                if let date = dateFormatterGet.date(from: task.created_at!) {
+                    self.createdDate.text = date.timeAgoSinceDate(day: dateFormatterPrint.string(from: date)) //not forgot
+                    print(date.timeAgoSinceDate(day: dateFormatterPrint.string(from: date)))
+                } else {
+                    print("There was an error decoding the string")
+                }
+                self.dateText.text = self.dateT
+                self.narrativeText.text = task.narrative
+                self.cashLabel.text = self.amount
+                print(self.textSize)
+                print(self.checkIsTherePhotoBool)
+            }
+            
+            
+            self.pageControl.numberOfPages = self.count
+        }
+    }
+    func getTask(id:Int,completion: @escaping (_ taskcategory: [Task_Resource],_ paramcategory: [Param]) -> ()) {
+        guard let urls = URL(string: "\(Constans().taskUrl)\(id)") else {return}
+>>>>>>> 280e655c76ed89c00c80f5003d118d541af40352
+        
+        let shimmerCard = UIView()
+        shimmerCard.backgroundColor = .white
+        shimmerCard.layer.cornerRadius = 40
+        shimmerCard.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
+        let cashLabel = UIView()
+        cashLabel.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        cashLabel.layer.cornerRadius = 10
+        
+        let locationView1 = UIView()
+        locationView1.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        locationView1.layer.cornerRadius = 10
+        
+        let locationView2 = UIView()
+        locationView2.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        locationView2.layer.cornerRadius = 10
+        
+        let rev = UIView()
+        rev.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        rev.layer.cornerRadius = 10
+        
+        let amountView = UIView()
+        amountView.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        amountView.layer.cornerRadius = 10
+        
+        let myday = UIView()
+        myday.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        myday.layer.cornerRadius = 10
+        
+        let Mygender = UIView()
+        Mygender.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        Mygender.layer.cornerRadius = 10
+        
+        let descr = UIView()
+        descr.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        descr.layer.cornerRadius = 10
+        
+        let revName = UIView()
+        revName.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        revName.layer.cornerRadius = 10
+        
+        let Revday = UIView()
+        Revday.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        Revday.layer.cornerRadius = 10
+        
+        let revDescr = UIView()
+        revDescr.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.8901960784, blue: 0.9333333333, alpha: 1)
+        revDescr.layer.cornerRadius = 10
+        
+        
+        let iconLike = UIImageView()
+        iconLike.image = #imageLiteral(resourceName: "greenGood")
+        let iconLike2 = UIImageView()
+        iconLike2.image = #imageLiteral(resourceName: "brownNormal")
+        let iconLike3 = UIImageView()
+        iconLike3.image = #imageLiteral(resourceName: "redBad")
+        
+        shimmer = FBShimmeringView(frame: EmptyShimmerView.frame)
+        shimmer.shimmeringOpacity = 0.1
+        shimmer.shimmeringSpeed = 550
+        shimmer.shimmeringDirection = .right
+        self.view.addSubview(EmptyShimmerView)
+        self.view.addSubview(shimmer)
+        shimmer.contentView = EmptyShimmerView
+        EmptyShimmerView.addSubview(shimmerCard)
+        
+        shimmerCard.addSubview(cashLabel)
+        shimmerCard.addSubview(myday)
+        shimmerCard.addSubview(locationView1)
+        shimmerCard.addSubview(Mygender)
+        shimmerCard.addSubview(locationView2)
+        shimmerCard.addSubview(descr)
+        shimmerCard.addSubview(rev)
+        shimmerCard.addSubview(amountView)
+        shimmerCard.addSubview(revName)
+        shimmerCard.addSubview(revDescr)
+        shimmerCard.addSubview(Revday)
+        shimmerCard.addSubview(iconLike)
+        shimmerCard.addSubview(iconLike2)
+        shimmerCard.addSubview(iconLike3)
+        shimmerCard.addSubview(shimmerUserImage)
+        shimmerCard.addSubview(lineview1)
+        shimmerCard.addSubview(lineView2)
+        
+        EmptyShimmerView.snp.makeConstraints { (make) in
+            make.edges.equalTo(self.view)
+        }
+        shimmer.snp.makeConstraints { (make) in
+            make.edges.equalTo(EmptyShimmerView)
+        }
+        shimmerCard.snp.makeConstraints { (make) in
+            make.left.equalTo(EmptyShimmerView.snp.left)
+            make.right.equalTo(EmptyShimmerView.snp.right)
+            make.bottom.equalTo(EmptyShimmerView.snp.bottom)
+            make.height.equalTo(EmptyShimmerView.snp.height).multipliedBy(0.85)
+        }
+        
+        cashLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(shimmerCard.snp.top).offset(20)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.width.equalTo(shimmerCard.snp.width).multipliedBy(0.5)
+            make.height.equalTo(20)
+        }
+        
+        myday.snp.makeConstraints { (make) in
+            make.top.equalTo(cashLabel.snp.bottom).offset(10)
+            make.left.equalTo(cashLabel.snp.left)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(23)
+        }
+        descr.snp.makeConstraints { (make) in
+            make.top.equalTo(myday.snp.bottom).offset(10)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.width.equalTo(cashLabel.snp.width)
+            make.height.equalTo(20)
+        }
+        lineview1.snp.makeConstraints { (make) in
+            make.top.equalTo(descr.snp.bottom).offset(10)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(1)
+        }
+        locationView1.snp.makeConstraints { (make) in
+            make.top.equalTo(lineview1.snp.bottom).offset(16)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.size.equalTo(CGSize(width: 70, height: 20))
+        }
+        locationView2.snp.makeConstraints { (make) in
+            make.top.equalTo(locationView1.snp.bottom).offset(8)
+            make.left.equalTo(locationView1.snp.left)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(20)
+        }
+        Mygender.snp.makeConstraints { (make) in
+            make.top.equalTo(locationView2.snp.bottom).offset(16)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.size.equalTo(CGSize(width: 70, height: 20))
+        }
+        
+        rev.snp.makeConstraints { (make) in
+            make.top.equalTo(Mygender.snp.bottom).offset(8)
+            make.left.equalTo(locationView1.snp.left)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(20)
+        }
+        amountView.snp.makeConstraints { (make) in
+            make.top.equalTo(rev.snp.bottom).offset(16)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.size.equalTo(CGSize(width: 70, height: 20))
+        }
+        revName.snp.makeConstraints { (make) in
+            make.top.equalTo(amountView.snp.bottom).offset(8)
+            make.left.equalTo(locationView1.snp.left)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(20)
+        }
+        Revday.snp.makeConstraints { (make) in
+            make.top.equalTo(revName.snp.bottom).offset(16)
+            make.left.equalTo(locationView1.snp.left)
+            make.size.equalTo(CGSize(width: 70, height: 20))
+        }
+        revDescr.snp.makeConstraints { (make) in
+            make.top.equalTo(Revday.snp.bottom).offset(8)
+            make.left.equalTo(Revday.snp.left)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(20)
+        }
+        lineView2.snp.makeConstraints { (make) in
+            make.top.equalTo(revDescr.snp.bottom).offset(10)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.right.equalTo(shimmerCard.snp.right).offset(-24)
+            make.height.equalTo(1)
+        }
+        iconLike.snp.makeConstraints { (make) in
+            make.left.equalTo(shimmerUserImage.snp.right).offset(24)
+            make.top.equalTo(shimmerUserImage.snp.centerY).offset(2)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        iconLike2.snp.makeConstraints { (make) in
+            make.left.equalTo(iconLike.snp.right).offset(16)
+            make.top.equalTo(shimmerUserImage.snp.centerY).offset(2)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        iconLike3.snp.makeConstraints { (make) in
+            make.left.equalTo(iconLike2.snp.right).offset(16)
+            make.top.equalTo(shimmerUserImage.snp.centerY).offset(2)
+            make.size.equalTo(CGSize(width: 15, height: 15))
+        }
+        shimmerUserImage.snp.makeConstraints { (make) in
+            make.top.equalTo(lineView2.snp.top).offset(16)
+            make.left.equalTo(shimmerCard.snp.left).offset(24)
+            make.size.equalTo(CGSize(width: 64, height: 64))
+        }
+        shimmer.isShimmering = true
+    }
+}
